@@ -24,20 +24,11 @@ jobs:
       - name: Build
         run: ./gradlew build ${{ env.GRADLE_ARGS }}
 
-      - name: Generate checksums
-        run: sha256sum versions/*/build/libs/* loader/{container,stage{0,1,2}}/{fabric,launchwrapper,modlauncher{8,9}}/build/libs/* | tee checksums.txt
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: checksums
-          path: checksums.txt
-
       # Upload the raw jars to aid in debugging non-determinism issues if we got a checksum mismatch
       - uses: actions/upload-artifact@v4
-        if: ${{ failure() && steps.verify.conclusion == 'failure' }}
         with:
           name: mod-jars
-          path: versions/*/build*
+          path: "*"
           # These are fairly large, so we do not want to keep them around for particularly long.
           # Once fully deployed, one can simply fetch the jar from Essential infrastructure instead.
           retention-days: 1
